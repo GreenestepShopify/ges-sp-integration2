@@ -70,9 +70,9 @@ exports.getCompany = function (shopifyInfo)
 exports.getAddress1 = function (shopifyInfo)
 {
 	if ( existsData (shopifyInfo.billing_address) && existsData (shopifyInfo.billing_address.address1))
-		return shopifyInfo.billing_address.address1 + " " + shopifyInfo.billing_address.address2 ;
+		return shopifyInfo.billing_address.address1 + " " + shopifyInfo.billing_address.address2 + "\nOtherLine" ;
 	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.address1 )))
-		return shopifyInfo.customer.default_address.address1 + " " + shopifyInfo.default_address.address2 ;
+		return shopifyInfo.customer.default_address.address1 + " " + shopifyInfo.default_address.address2 + "\nOtherLine" ;
 	return undefined;
 }
 
