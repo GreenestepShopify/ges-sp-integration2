@@ -62,7 +62,7 @@ exports.orderPlaced = function (req, res) {
 		person: "",
 		lineitems: []
 	}
-
+	console.log(infoReturned['shopifyInfo'])
 	// Code for preventing multiple execution
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;
