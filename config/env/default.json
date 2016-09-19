@@ -1,0 +1,23 @@
+{
+  "keys":{
+	"shopifyPassword" : "902a37784595b049d6d9a577f121e2be",
+	"shopifyKey" : "7c795ec5401e4d2504585f70fb6fdb21",
+	"rollbarKey" : "1f57b40bd14f41fb856a0229a0250324",
+	"ShoppingCartLoginPassword" : "test"
+  },
+  "additionalKeys":{
+		"shopName" : "greenstepintegration",
+    "interval" : "00,20,40 * * * * *",
+		"gsBackoffice" : "http://24.89.145.74:92",
+    "genericSKU" : "NEWSKU",
+    "timeBetweenAutoRequest" : "0"
+  },
+  "GesLogin":{
+  	"GesLoginUsername":"ADMIN",
+  	"GesLoginPassword":"ADMIN",
+  	"GesLoginCompany":"FMC"
+  },
+  "Places" : {
+     "PurchaseSite" : "franklin-mint-coins.myshopify.com"
+  }
+}
