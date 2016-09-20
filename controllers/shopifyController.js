@@ -63,8 +63,6 @@ exports.orderPlaced = function (req, res) {
 		lineitems: []
 	}
 
-	infoReturned['shopifyInfo'].email = infoReturned['shopifyInfo'].contact_email = infoReturned['shopifyInfo'].customer.email = "toshiba@toshiba.com"
-
 	// Code for preventing multiple execution
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;

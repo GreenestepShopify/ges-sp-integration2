@@ -31,12 +31,12 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 	
 	// this is the only relevant information, the rest must be hardcoded
 	var ShipAddressCode = dataElement.match(/'addressCode':'(.+?)'/)[1];
-	var DeliveryMethod = "UPSE";
+	var DeliveryMethod = "USPS-REG";
 	var PaymentType = 2;
 	var PaymentTermCode = "ONCC";
 	var FlatShippingCharge = infoReturned['shopifyInfo'].shipping_lines[0].price;
 
-	//console.log ("[#"+infoReturned['shopifyInfo'].name+"][createOrder]Important info for creating order: ShipAddressCode: '"+ShipAddressCode+"', DeliveryMethod: '"+DeliveryMethod+"', FlatShippingCharge: '"+FlatShippingCharge+"', PaymentType: '"+PaymentType+"', PaymentTermCode: '" + PaymentTermCode+"'");
+	//console.log ("[#"+infoReturned['shopifyInfo'].name+"][createOrder]Info for creating order: ShipAddressCode: '"+ShipAddressCode+"', DeliveryMethod: '"+DeliveryMethod+"', FlatShippingCharge: '"+FlatShippingCharge+"', PaymentType: '"+PaymentType+"', PaymentTermCode: '" + PaymentTermCode+"'");
 	var orderData = `{
 						key:[{"API_KEY":"`+infoReturned['API_KEY']+`","SESSION_KEY": "`+infoReturned['SESSION_KEY']+`"}]
 						,data:"{'objOrderPrerequisite':{
