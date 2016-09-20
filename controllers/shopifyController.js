@@ -62,7 +62,7 @@ exports.orderPlaced = function (req, res) {
 		person: "",
 		lineitems: []
 	}
-	console.log(infoReturned['shopifyInfo'])
+
 	// Code for preventing multiple execution
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;
@@ -204,11 +204,8 @@ exports.orderPlaced = function (req, res) {
 
 function translateCarrier(DelivDesc)
 {
-	console.log("["+DelivDesc+"]")
-
 	var carr = "Other"
 	var DelivDescToParse = DelivDesc.toLowerCase().replace(/\s/g, "");
-
 	if ( DelivDescToParse.match("UPS Next Day Air Early AM".toLowerCase().replace(/\s/g, "") ) )
 		carr = "USPS-REG"
 	else if ( DelivDescToParse.match("United States Postal Service".toLowerCase().replace(/\s/g, "") ) )
@@ -217,8 +214,6 @@ function translateCarrier(DelivDesc)
 		carr = "UPS";
 	else if ( DelivDescToParse.match("FedEx".toLowerCase().replace(/\s/g, "") ) )
 		carr = "FedEx";
-
-	console.log("["+carr+"]")
 	return carr;
 }
 
