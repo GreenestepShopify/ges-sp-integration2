@@ -204,14 +204,22 @@ exports.orderPlaced = function (req, res) {
 
 function translateCarrier(DelivDesc)
 {
+	console.log("["+DelivDesc+"]")
+
+	var carr = "Other"
 	var DelivDescToParse = DelivDesc.toLowerCase().replace(/\s/g, "");
-	if ( DelivDescToParse.match("United States Postal Service".toLowerCase().replace(/\s/g, "") ) )
-		return "USPS";
-	if ( DelivDescToParse.match("UPS".toLowerCase().replace(/\s/g, "") ) )
-		return "UPS";
-	if ( DelivDescToParse.match("FedEx".toLowerCase().replace(/\s/g, "") ) )
-		return "FedEx";
-	return "Other";
+
+	if ( DelivDescToParse.match("UPS Next Day Air Early AM".toLowerCase().replace(/\s/g, "") ) )
+		carr = "USPS-REG"
+	else if ( DelivDescToParse.match("United States Postal Service".toLowerCase().replace(/\s/g, "") ) )
+		carr = "USPS";
+	else if ( DelivDescToParse.match("UPS".toLowerCase().replace(/\s/g, "") ) )
+		carr = "UPS";
+	else if ( DelivDescToParse.match("FedEx".toLowerCase().replace(/\s/g, "") ) )
+		carr = "FedEx";
+
+	console.log("["+carr+"]")
+	return carr;
 }
 
 

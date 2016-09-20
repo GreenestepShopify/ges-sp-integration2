@@ -1,17 +1,16 @@
 var nconf    = require('nconf');
 var performRequest = require('./performRequest');
 var functions = require('./functions');
-
+ 
 exports.saveCustomer = function  (infoReturned, rollbar, cb, existence){
 
 	if (!existence){
-		var customer = infoReturned['shopifyInfo'].customer
-		var billing_address = infoReturned['shopifyInfo'].billing_address
-		var pass = nconf.get("keys:ShoppingCartLoginPassword");;
+		
+		var pass = nconf.get("keys:ShoppingCartLoginPassword");
 		var Cname = functions.getCustomerName (infoReturned['shopifyInfo'])
 		var Cemail = functions.getCustomeremail (infoReturned['shopifyInfo'])
-		var fn = Cname.match(/^(.+?)\s/)[1];
-		var ln = Cname.match(/\s(.+?)$/)[1];
+		var fn = Cname.match(/^(.+?)\s/) ? Cname.match(/^(.+?)\s/)[1] : '';
+		var ln = Cname.match(/\s(.+?)$/) ? Cname.match(/\s(.+?)$/)[1] : '';
 		var address1 = functions.getAddress1 (infoReturned['shopifyInfo'])
 		var phone = functions.getPhone (infoReturned['shopifyInfo'])
 		var city = functions.getCity (infoReturned['shopifyInfo'])
@@ -19,6 +18,7 @@ exports.saveCustomer = function  (infoReturned, rollbar, cb, existence){
 		var zip = functions.getZip (infoReturned['shopifyInfo']) 
 		var country = functions.getCountry (infoReturned['shopifyInfo'])
 		var company = functions.getCompany (infoReturned['shopifyInfo'])
+		var customerNotes = functions.getCustomerNote (infoReturned['shopifyInfo'])
 
 		var customerData = `{
 			key: [{ "API_KEY": "`+infoReturned['API_KEY']+`",
@@ -28,7 +28,7 @@ exports.saveCustomer = function  (infoReturned, rollbar, cb, existence){
 									'Active':null,
 									'CustCode':'`+ Cemail +`',
 									'Name':'`+ Cname +`',
-									'CustomerNotes':'`+ customer.note +`',
+									'CustomerNotes':'`+ customerNotes +`',
 									'SourceCode':'',
 									'PONumberRequired':null,
 									'DefaultContCode':0,

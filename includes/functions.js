@@ -16,7 +16,12 @@ exports.getCountry = function (shopifyInfo)
 	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.country )))
 		return shopifyInfo.customer.default_address.country;
 
-	return undefined;
+	return '';
+}
+
+exports.getCustomerNote = function (shopifyInfo)
+{
+	return (existsData (shopifyInfo.customer) && existsData (shopifyInfo.customer.note)) ? shopifyInfo.customer.note : '';
 }
 
 exports.getZip = function (shopifyInfo)
@@ -26,7 +31,7 @@ exports.getZip = function (shopifyInfo)
 	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.zip )))
 		return shopifyInfo.customer.default_address.zip;
 
-	return undefined;
+	return '';
 }
 
 exports.getProvince_code = function (shopifyInfo)
@@ -35,7 +40,7 @@ exports.getProvince_code = function (shopifyInfo)
 		return shopifyInfo.billing_address.province_code;
 	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.province_code )))
 		return shopifyInfo.customer.default_address.province_code;
-	return undefined;
+	return '';
 }
 
 
@@ -45,7 +50,7 @@ exports.getCity = function (shopifyInfo)
 		return shopifyInfo.billing_address.city;
 	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.city )))
 		return shopifyInfo.customer.default_address.city;
-	return undefined;
+	return '';
 }
 
 
@@ -55,22 +60,22 @@ exports.getPhone = function (shopifyInfo)
 		return shopifyInfo.billing_address.phone;
 	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.phone )))
 		return shopifyInfo.customer.default_address.phone;
-	return undefined;
+	return '';
 }
 
 exports.getCompany = function (shopifyInfo)
 {
 	if ( existsData (shopifyInfo.billing_address) && existsData (shopifyInfo.billing_address.company))
 		return shopifyInfo.billing_address.company;
-	if ((existsData (shopifyInfo.customer)) && (existsData (shopifyInfo.customer.default_address)) && (existsData (shopifyInfo.customer.default_address.company )))
+	if ((existsData (shopifyInfo.customer) && existsData (shopifyInfo.customer.default_address)) && existsData (shopifyInfo.customer.default_address.company))
 		return shopifyInfo.customer.default_address.company ;
-	return undefined;
+	return '';
 }
 
 exports.getAddress1 = function (shopifyInfo)
 {
-	var retAddr = ""
-	if ( existsData (shopifyInfo.billing_address) && existsData (shopifyInfo.billing_address.address1))
+	var retAddr = ''
+	if ( (existsData (shopifyInfo.billing_address) && existsData (shopifyInfo.billing_address.address1)) && existsData (shopifyInfo.billing_address.address2) )
 		retAddr += shopifyInfo.billing_address.address1 + " " + shopifyInfo.billing_address.address2;
 	return retAddr;
 }
@@ -84,7 +89,7 @@ exports.getCustomeremail = function (shopifyInfo)
 		return shopifyInfo.email;
 	if ( existsData (shopifyInfo.contact_email))
 		return shopifyInfo.contact_email;
-	return undefined
+	return ''
 }
 
 exports.getCustomerName = function (shopifyInfo)
@@ -128,5 +133,5 @@ exports.getCustomerName = function (shopifyInfo)
 				return shopifyInfo.shipping_address.first_name + " " + shopifyInfo.shipping_address.last_name
 	}
 	// NONE
-	return undefined;
+	return '';
 }

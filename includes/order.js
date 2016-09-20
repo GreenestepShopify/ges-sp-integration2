@@ -33,7 +33,7 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 	var ShipAddressCode = dataElement.match(/'addressCode':'(.+?)'/)[1];
 	var DeliveryMethod = "UPSE";
 	var PaymentType = 2;
-	var PaymentTermCode = "COD";
+	var PaymentTermCode = "ONCC";
 	var FlatShippingCharge = infoReturned['shopifyInfo'].shipping_lines[0].price;
 
 	//console.log ("[#"+infoReturned['shopifyInfo'].name+"][createOrder]Important info for creating order: ShipAddressCode: '"+ShipAddressCode+"', DeliveryMethod: '"+DeliveryMethod+"', FlatShippingCharge: '"+FlatShippingCharge+"', PaymentType: '"+PaymentType+"', PaymentTermCode: '" + PaymentTermCode+"'");
