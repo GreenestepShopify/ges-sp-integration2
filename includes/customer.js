@@ -73,7 +73,7 @@ exports.saveCustomer = function  (infoReturned, rollbar, cb, existence){
 		
 		performRequest.performRequest( infoReturned['shopifyInfo'].name , 'POST','/StoreAPI/AccountMngmnt/SaveCustomer',customerData,
 			function (body) {
-				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"][saveCustomer]The new customer ("+customer.email+") was created successfully",
+				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"][saveCustomer]The new customer ("+infoReturned['shopifyInfo'].customer.email+") was created successfully",
 				{
 					level: "info",
 					shopifyOrderID: infoReturned['shopifyInfo'].name,
