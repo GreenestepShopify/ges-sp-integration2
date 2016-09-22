@@ -235,13 +235,18 @@ function updateOrder(infoReturned, rollbar, callback) {
 	console.log ("[#"+infoReturned.shopifyInfo.name+"]Tacking number received. Using keys: ShopName: '"+shopname+"', ShopKey: '"+shopkey+"', ShopPassword: '"+shopPassword+"'" );
 	console.log ("[#"+infoReturned.shopifyInfo.name+"]Trying to create a fulfillment: order: '"+order_id+"', tracking Number: '"+tracking_number+"', tracking company: '"+parsedTrackingCompany+"'.");
 
+
+
+	console.log ( "Trying to fulfil items: " + infoReturned.lineitems.map( function(elem){ return elem.id } ))
+
 	var options = { method: 'POST', url: 'https://'+shopkey+':'+shopPassword+'@'+site+'/admin/orders/'+order_id+'/fulfillments.json',
 	  headers: { 'cache-control': 'no-cache', 'content-type': 'application/json' },
 	  body: { fulfillment: {
 	  							tracking_url: tracking_url,
 	  							tracking_company: parsedTrackingCompany,
 	  							shipping_carrier: parsedTrackingCompany,
-	  							tracking_number: tracking_number
+	  							tracking_number: tracking_number,
+	  							line_items : infoReturned.lineitems
 	  						}
 	  		},
 	  json: true

@@ -127,7 +127,7 @@ exports.addItemToCart = function  (infoReturned, rollbar, cb){
 	var usingGenericSku = 0;
 	var usingExternVendor = 0;
 	//console.log("[#" + infoReturned['shopifyInfo'].name + "]Adding " + line_items.length + " items to cart" );
-	
+
 	async.each(line_items, function(item, callback) {
 
 		if (  item.vendor == nconf.get("additionalKeys:allowedVendor") ){
@@ -139,7 +139,7 @@ exports.addItemToCart = function  (infoReturned, rollbar, cb){
 			performRequest.performRequest( infoReturned['shopifyInfo'].name , 'POST','/StoreAPI/ShoppingCart/AddItemToCart',cartItemInfo,
 				function (body) {
 					// ADDED WITH REGULAR SKU
-					infoReturned['lineitems'].push(item.id);
+					infoReturned['lineitems'].push( { "id": item.id } );
 					bodyCb.push(body);
 					callback(null,bodyCb);
 				},
@@ -164,7 +164,7 @@ exports.addItemToCart = function  (infoReturned, rollbar, cb){
 						function (body) {
 							// ADDED ITEM WITH GENERIC SKU
 							usingGenericSku++
-							infoReturned['lineitems'].push(item.id);
+							infoReturned['lineitems'].push( { "id": item.id } );
 							bodyCb.push(body);
 							callback(null,bodyCb);
 						},
