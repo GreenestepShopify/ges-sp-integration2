@@ -10,6 +10,18 @@ var request = require('request');
 // this will be used for storing temporarily processed transaction id's
 var processed = [];
 
+
+
+Array.prototype.unique=function(a){
+  return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
+});
+
+function isThereItemWithVendorFMC(order)
+{
+	return order.line_items.map( function(x){ return x.vendor } ).some(function(e){ return e==nconf.get("additionalKeys:allowedVendor") });
+}
+
+
 function existsCustomerInformation (data){
 	return (functions.getCountry(data) &&
 			functions.getZip(data) &&
@@ -67,6 +79,23 @@ exports.orderPlaced = function (req, res) {
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;
 
+
+	if ( !isThereItemWithVendorFMC( infoReturned.shopifyInfo ) ){
+		// NONE OF THE ITEMS BELONGS TO FMC VENDOR
+		console.log("[#"+infoReturned['shopifyInfo'].name+"]There is no item from '" + nconf.get("additionalKeys:allowedVendor") + "'' vendor on this order." );
+		rollbar.reportMessageWithPayloadData(
+			"[#" + infoReturned['shopifyInfo'].name + "]Executing process with a new order",
+			{
+				level: "info",
+				fingerprint: "$AllExternVendor_" + infoReturned['shopifyInfo'].name + "@ " + infoReturned['shopifyInfo'].id.toString(),
+				shopifyOrderID: infoReturned['shopifyInfo'].name,
+				filteredVendors: infoReturned.shopifyInfo.line_items.map( function(elem){ return elem.vendor } ).unique()
+			}
+		);
+		return;
+	}
+
+
 	// reporting to rollbar all the shopify request
 	console.log("[#"+infoReturned['shopifyInfo'].name+"]Executing orderPlaced with order: '" + infoReturned['shopifyInfo'].name + "'");
 	rollbar.reportMessageWithPayloadData(
@@ -74,6 +103,7 @@ exports.orderPlaced = function (req, res) {
 		{
 			level: "info",
 			fingerprint: "$NewOrd_" + infoReturned['shopifyInfo'].name + "@ " + infoReturned['shopifyInfo'].id.toString(),
+			shopifyOrderID: infoReturned['shopifyInfo'].name,
 			shopifyRequest: infoReturned["shopifyInfo"]
 		}
 	);
@@ -198,6 +228,7 @@ exports.orderPlaced = function (req, res) {
 			message: "[# " + infoReturned['shopifyInfo'].name + "] " + ErrMsg,
 			allRequest : infoReturned['shopifyInfo']
 		});
+		return;
 	}
 
 }
