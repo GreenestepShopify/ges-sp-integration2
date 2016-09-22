@@ -83,8 +83,9 @@ exports.orderPlaced = function (req, res) {
 	if ( !isThereItemWithVendorFMC( infoReturned.shopifyInfo ) ){
 		// NONE OF THE ITEMS BELONGS TO FMC VENDOR
 		console.log("[#"+infoReturned['shopifyInfo'].name+"]There is no item from '" + nconf.get("additionalKeys:allowedVendor") + "'' vendor on this order." );
+		console.log("[#"+infoReturned['shopifyInfo'].name+"]Process finished successfully.");
 		rollbar.reportMessageWithPayloadData(
-			"[#" + infoReturned['shopifyInfo'].name + "]Executing process with a new order",
+			"[#" + infoReturned['shopifyInfo'].name + "]There is no item from '" + nconf.get("additionalKeys:allowedVendor") + "'' vendor on this order.",
 			{
 				level: "info",
 				fingerprint: "$AllExternVendor_" + infoReturned['shopifyInfo'].name + "@ " + infoReturned['shopifyInfo'].id.toString(),
@@ -268,7 +269,7 @@ function updateOrder(infoReturned, rollbar, callback) {
 
 
 
-	console.log ( "Trying to fulfil items: " + infoReturned.lineitems.map( function(elem){ return elem.id } ))
+	console.log ( "[#"+infoReturned.shopifyInfo.name+"]Trying to fulfil items: " + infoReturned.lineitems.map( function(elem){ return elem.id } ))
 
 	var options = { method: 'POST', url: 'https://'+shopkey+':'+shopPassword+'@'+site+'/admin/orders/'+order_id+'/fulfillments.json',
 	  headers: { 'cache-control': 'no-cache', 'content-type': 'application/json' },
