@@ -197,7 +197,6 @@ exports.addItemToCart = function  (infoReturned, rollbar, cb){
 					level: "info",
 					shopifyOrderID: infoReturned['shopifyInfo'].name,
 					fingerprint: "$ExternVendor" + infoReturned['shopifyInfo'].name + "@" + infoReturned['shopifyInfo'].id.toString(),
-					response: body,
 					vendor: item.vendor,
 					allRequest: cartItemInfo
 				}
