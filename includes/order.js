@@ -125,13 +125,16 @@ exports.addItemToCart = function  (infoReturned, rollbar, cb){
 	var cartItemInfo;
 	var genericSKU = nconf.get("additionalKeys:genericSKU")
 	var usingGenericSku = 0;
-	console.log("[#" + infoReturned['shopifyInfo'].name + "]Adding " + line_items.length + " items to cart" );
+	var usingExternVendor = 0;
+	//console.log("[#" + infoReturned['shopifyInfo'].name + "]Adding " + line_items.length + " items to cart" );
 	
 	async.each(line_items, function(item, callback) {
 
+		if (  item.vendor == nconf.get("additionalKeys:allowedVendor") ){
+
+			// PROCESS ONLY ITEMS FROM FMC VENDOR
 			var itemAliasCode = "";
 			var measureCode = "";
-
 			cartItemInfo = returnCartItemInfo (infoReturned['SESSION_KEY'], infoReturned['API_KEY'], item.sku, item.quantity, itemAliasCode , measureCode )
 			performRequest.performRequest( infoReturned['shopifyInfo'].name , 'POST','/StoreAPI/ShoppingCart/AddItemToCart',cartItemInfo,
 				function (body) {
@@ -184,12 +187,30 @@ exports.addItemToCart = function  (infoReturned, rollbar, cb){
 					);
 				}
 			);
+		}else{
+			// OTHER ITEMS VENDORS
+			usingExternVendor++
+			console.log("[#"+infoReturned['shopifyInfo'].name+"]Filtering item with extern vendor: " + item.vendor );
+			rollbar.reportMessageWithPayloadData (
+				"[#"+infoReturned['shopifyInfo'].name+"]Item with vendor: " + item.vendor + " was filtered from cart",
+				{
+					level: "info",
+					shopifyOrderID: infoReturned['shopifyInfo'].name,
+					fingerprint: "$ExternVendor" + infoReturned['shopifyInfo'].name + "@" + infoReturned['shopifyInfo'].id.toString(),
+					response: body,
+					vendor: item.vendor,
+					allRequest: cartItemInfo
+				}
+			);
+			callback( null , {} )
+		}
+
 	}, function(err) {
 		if (err) {
   			console.log("[#"+infoReturned['shopifyInfo'].name+"][addItemToCart]An item failed to process on addItemToCart, aborting process.");
 			cb(1,bodyCb);
 		}else{
-			console.log("[#"+infoReturned['shopifyInfo'].name+"][addItemToCart]All items have been added to the cart successfully. ("+usingGenericSku+" with generic SKU: "+genericSKU+")");
+			console.log("[#"+infoReturned['shopifyInfo'].name+"][addItemToCart]All items have been added to the cart successfully. ("+usingGenericSku+" with generic SKU: "+genericSKU+", " + usingExternVendor + " were filtered due to its vendor)");
 			cb(null,bodyCb);
 		}
 	});

@@ -10,7 +10,8 @@
     "interval" : "00,20,40 * * * * *",
 		"gsBackoffice" : "http://24.89.145.74:92",
     "genericSKU" : "NEWSKU",
-    "timeBetweenAutoRequest" : "0"
+    "timeBetweenAutoRequest" : "0",
+    "allowedVendor" : "Franklin Mint Coins"
   },
   "GesLogin":{
   	"GesLoginUsername":"ADMIN",
