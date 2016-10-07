@@ -73,12 +73,12 @@ exports.saveCustomer = function  (infoReturned, rollbar, cb, existence){
 		
 		performRequest.performRequest( infoReturned['shopifyInfo'].name , 'POST','/StoreAPI/AccountMngmnt/SaveCustomer',customerData,
 			function (body) {
-				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"][saveCustomer]The new customer ("+infoReturned['shopifyInfo'].customer.email+") was created successfully",
+				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"][saveCustomer]The new customer ("+Cemail+") was created successfully",
 				{
 					level: "info",
 					shopifyOrderID: infoReturned['shopifyInfo'].name,
 					fingerprint: "$SaveCustOK_" + infoReturned['shopifyInfo'].name + "@" + infoReturned['shopifyInfo'].id.toString(),
-					customer: infoReturned['shopifyInfo'].customer,
+					customer: Cemail,
 					password: pass,
 					allRequest: customerData
 				});
@@ -86,13 +86,14 @@ exports.saveCustomer = function  (infoReturned, rollbar, cb, existence){
 				cb(null,body,true,false);
 			},
 			function (body) {
-				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"][saveCustomer]There was an error creating the new customer ("+customer.email+")",
+				console.log("BodyOnSaveCustomerError: " , body)
+				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"][saveCustomer]There was an error creating the new customer ("+Cemail+")",
 					{
 						level: "error",
 						shopifyOrderID: infoReturned['shopifyInfo'].name,
 						fingerprint: "$ErrSaveCust" + infoReturned['shopifyInfo'].name + "@" + infoReturned['shopifyInfo'].id.toString(),
 						response: body,
-						customer: infoReturned['shopifyInfo'].customer,
+						customer: Cemail,
 						password: pass,
 						allRequest: customerData
 					});
