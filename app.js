@@ -3,6 +3,9 @@ var bodyParser = require('body-parser');
 var router = require('./router');
 var request = require('request');
 var nconf    = require('nconf');
+var mongoose = require('mongoose');
+var Order = require('../includes/orderSchema');
+
 
 
 if ( process.env.NODE_ENV === undefined ) {
@@ -31,10 +34,21 @@ router.route(app)
 app.listen(app.get('port'), function() {
     console.log('Server listening on process ' + process.pid + " and port " + app.get('port'));
 	
-	if ( nconf.get("additionalKeys:timeBetweenAutoRequest") != "0"){
-		console.log("KeepAlive Interval: " + nconf.get("additionalKeys:timeBetweenAutoRequest") + " ms")
-		setInterval( function(){ request('https://ges-sp-integration.herokuapp.com/shopify/keepAlive', null ); }, nconf.get("additionalKeys:timeBetweenAutoRequest") );		
-	}
+	mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
 
+	
+	var ord1 = new Order({
+		  orderId: "Sample",
+		  orderName: "SampleName",
+		  status: "1"
+	});
+
+	ord1.save(function(err) {
+	  if (err) throw err;
+
+	  console.log('ord1 saved successfully!');
+	});
+
+	
 })
 
