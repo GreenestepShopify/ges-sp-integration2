@@ -4,7 +4,7 @@ var router = require('./router');
 var request = require('request');
 var nconf    = require('nconf');
 var mongoose = require('mongoose');
-var Order = require('includes/orderSchema');
+var Order = require('./Order');
 
 
 
