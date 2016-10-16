@@ -4,7 +4,7 @@ var router = require('./router');
 var request = require('request');
 var nconf    = require('nconf');
 var mongoose = require('mongoose');
-var Order = require('../includes/orderSchema');
+var Order = require('includes/orderSchema');
 
 
 
@@ -49,6 +49,6 @@ app.listen(app.get('port'), function() {
 	  console.log('ord1 saved successfully!');
 	});
 
-	
+
 })
 
