@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 // create a schema
-order_id infoReturned.shopifyInfo.id;
+
 var Order = new Schema({
   orderId: String,
   orderName: String,
