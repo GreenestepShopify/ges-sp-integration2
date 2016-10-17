@@ -94,9 +94,10 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 				});
 				cb(1,body);
 			}else{ 
+				console.log("data: " , JSON.parse(body)["DATA"])
 				Order.findOneAndUpdate(
 					{ orderName: infoReturned['shopifyInfo'].name },
-					{ orderNumberGreenestep: body["DATA"].OrderNo , status: '2' } ,
+					{ orderNumberGreenestep: JSON.parse(body)["DATA"].OrderNo , status: '2' } ,
 					function(err, user) {
 						  if (err)
 						  {
