@@ -75,7 +75,7 @@ function processOrder (order)
 					bodyGetShipmentTrackingNos : bodyGetShTrNos
 				}
 				console.log("infoReturned: " , infoReturned)
-				
+
 				rollbar.init(nconf.get("keys:rollbarKey"));
 				updateOrder.updateOrder(infoReturned, rollbar, updateCallback )		
 			}
@@ -90,8 +90,9 @@ function updateCallback(err, oname)
 		console.log(err);
 	
 	}else{
+		console.log("updateCallback: " , oname )
 		Order.findOneAndUpdate( { orderName: oname }, { status: "4" } , function(err, user) {
-		  if (err) throw err;
+		  if (err) console.log( "On updateCallbackError: " , err );
 
 		  // we have the updated user returned to us
 		  console.log(user);

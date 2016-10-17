@@ -86,14 +86,14 @@ exports.updateOrder = function  (infoReturned, rollbar, callback)
 						kind: transactionKind
 					}
 				);
-				callback (messageSent);
+				callback (messageSent , infoReturned['shopifyInfo'].name );
 			}else{
 				// Transaction successful
 				console.log( canonicMessage + "Transaction done succesfully, ammount captured." );
 				if (messageSent == canonicMessage)
-					callback(null);
+					callback(null , infoReturned['shopifyInfo'].name);
 				else
-					callback (messageSent);
+					callback (messageSent , infoReturned['shopifyInfo'].name);
 			}
 		});
 
