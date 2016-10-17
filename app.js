@@ -8,8 +8,8 @@ var Order = require('./Order');
 var CronJob = require('cron').CronJob;
 var nconf    = require('nconf');
 var rollbar = require("rollbar");
-var updateOrder = require('includes/updateOrder');
-var performRequest = require('includes/performRequest');
+var updateOrder = require('./includes/updateOrder');
+var performRequest = require('./includes/performRequest');
 
 
 if ( process.env.NODE_ENV === undefined ) {
@@ -68,7 +68,7 @@ function processOrder (order)
 									id: order.orderId,
 									name: order.orderName,
 									shipping_lines: [ { carrier_identifier : order.carrierId } ]
-								  }
+								  },
 					bodyGetShipmentTrackingNos : bodyGetShTrNos
 				}
 				rollbar.init(nconf.get("keys:rollbarKey"));

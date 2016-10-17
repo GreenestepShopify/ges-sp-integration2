@@ -84,8 +84,8 @@ exports.orderPlaced = function (req, res) {
 	if ( !ErrMsg ){
 
 		var newOrder = Order({
-		  orderId: processed[infoReturned['shopifyInfo'].id,
-		  orderName: processed[infoReturned['shopifyInfo'].name,
+		  orderId: infoReturned['shopifyInfo'].id,
+		  orderName: infoReturned['shopifyInfo'].name,
 		  carrierId : infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier,
 		  status: "1"
 		});
