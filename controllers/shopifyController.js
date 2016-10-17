@@ -64,7 +64,7 @@ exports.orderPlaced = function (req, res) {
 	}
 
 	//console.log(req.body)
-	infoReturned["shopifyInfo"] = sampleOrder();
+	//infoReturned["shopifyInfo"] = sampleOrder();
  
 
  	//console.log(infoReturned["shopifyInfo"])
