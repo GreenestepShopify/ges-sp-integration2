@@ -37,17 +37,15 @@ router.route(app)
 app.listen(app.get('port'), function() {
     console.log('Server listening on process ' + process.pid + " and port " + app.get('port'));
 	//mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
-	console.log("URI: " , nconf.get("additionalKeys:mongodb_uri"))
+	console.log("Using URI: " ,  nconf.get("additionalKeys:mongodb_uri"))
 	mongoose.connect(nconf.get("additionalKeys:mongodb_uri"))
 	//mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
 	//mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj
-	console.log(nconf.get("additionalKeys:interval"))
 	var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
 })
 
 function executeOnInterval()
 {
-	console.log("interval")
 	Order.find( {status: '2'}, function(err, orders) {
 	  if (err) console.log("err on interval: " , err);
 	  var k = 0;
@@ -58,8 +56,6 @@ function executeOnInterval()
 
 function processOrder (order)
 {
-	console.log("processOrder")
-	// infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier;
 	getTRNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKei, order.sessionKey,
 		
 		function (err,bodyGetShTrNos){
@@ -85,17 +81,12 @@ function processOrder (order)
 
 function updateCallback(err, oname)
 {
-	if (err)
-	{
+	if (err){
 		console.log(err);
-	
 	}else{
-		console.log("updateCallback: " , oname )
-		Order.findOneAndUpdate( { orderName: oname }, { status: "4" } , function(err, user) {
+		Order.findOneAndUpdate( { orderName: oname }, { status: "4" } , function(err, order) {
 		  if (err) console.log( "On updateCallbackError: " , err );
-
-		  // we have the updated user returned to us
-		  console.log(user);
+		  console.log("Process finished successfully");
 		});
 	}
 }
