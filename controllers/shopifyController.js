@@ -98,10 +98,8 @@ exports.orderPlaced = function (req, res) {
 		var cont = false
 		newOrder.save(function(err) {
 		  	if (err) console.log(err)
-		  	cont = !err
+		  	
 		});
-		while (!cont) {}
-
 
 		var loginSync = function(done){
 			loginRequest.loginGS(infoReturned["shopifyInfo"] , rollbar, 

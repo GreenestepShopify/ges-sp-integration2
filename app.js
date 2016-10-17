@@ -6,7 +6,6 @@ var nconf    = require('nconf');
 var mongoose = require('mongoose');
 var Order = require('./Order');
 var CronJob = require('cron').CronJob;
-var nconf    = require('nconf');
 var rollbar = require("rollbar");
 var updateOrder = require('./includes/updateOrder');
 var performRequest = require('./includes/performRequest');
@@ -37,8 +36,8 @@ router.route(app)
 //Start sever
 app.listen(app.get('port'), function() {
     console.log('Server listening on process ' + process.pid + " and port " + app.get('port'));
-	//mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
-	mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
+	mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
+	//mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
 	//mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj
 	
 	var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
