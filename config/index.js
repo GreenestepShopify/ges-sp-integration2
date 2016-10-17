@@ -15,7 +15,18 @@ module.exports = function(env) {
     	console.log( "Exception @ nconf: " , e.message );
         return null;
     }
+    
+    overrideFromEnv('MONGODB_URI', "additionalKeys:mongodb_uri" );
+    
+
 
     return nconf;
 };
 
+
+
+function overrideFromEnv(envKey, nconfKey) {
+  if (process.env[envKey]) {
+    nconf.set(nconfKey, process.env[envKey]);
+  }
+}

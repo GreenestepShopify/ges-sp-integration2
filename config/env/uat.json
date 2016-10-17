@@ -10,7 +10,8 @@
     "interval" : "00,20,40 * * * * *",
 		"gsBackoffice" : "http://24.89.145.74:92",
     "genericSKU" : "NEWSKU",
-    "timeBetweenAutoRequest" : "0"
+    "timeBetweenAutoRequest" : "0",
+    "mongodb_uri" : "mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9"
   },
   "GesLogin":{
   	"GesLoginUsername":"ADMIN",

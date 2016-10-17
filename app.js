@@ -36,7 +36,9 @@ router.route(app)
 //Start sever
 app.listen(app.get('port'), function() {
     console.log('Server listening on process ' + process.pid + " and port " + app.get('port'));
-	mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
+	//mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
+	console.log("URI: " , nconf.get("additionalKeys:mongodb_uri"))
+	mongoose.connect(nconf.get("additionalKeys:mongodb_uri"))
 	//mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
 	//mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj
 	
