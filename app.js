@@ -41,7 +41,7 @@ app.listen(app.get('port'), function() {
 	mongoose.connect(nconf.get("additionalKeys:mongodb_uri"))
 	//mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
 	//mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj
-	
+	console.log(nconf.get("additionalKeys:interval"))
 	var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
 })
 
@@ -49,7 +49,7 @@ function executeOnInterval()
 {
 	console.log("interval")
 	Order.find( {status: '2'}, function(err, orders) {
-	  if (err) throw err;
+	  if (err) console.log("err on interval: " , err);
 	  var k = 0;
 	  for (k=0 ; k<orders.length;k++)
 		processOrder (orders[k])
@@ -58,6 +58,7 @@ function executeOnInterval()
 
 function processOrder (order)
 {
+	console.log("processOrder")
 	// infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier;
 	getTRNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKei, order.sessionKey,
 		
