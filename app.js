@@ -5,7 +5,11 @@ var request = require('request');
 var nconf    = require('nconf');
 var mongoose = require('mongoose');
 var Order = require('./Order');
-
+var CronJob = require('cron').CronJob;
+var nconf    = require('nconf');
+var rollbar = require("rollbar");
+var updateOrder = require('includes/updateOrder');
+var performRequest = require('includes/performRequest');
 
 
 if ( process.env.NODE_ENV === undefined ) {
@@ -36,7 +40,8 @@ app.listen(app.get('port'), function() {
 	//mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
 	mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
 	//mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj
-	setInterval( executeOnInterval , 3000);
+	
+	var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
 })
 
 function executeOnInterval()
@@ -47,11 +52,97 @@ function executeOnInterval()
 	  for (k=0 ; k<orders.length;k++)
 		processOrder (orders[k])
 	});
-	console.log('\n')
 }
 
-function processOrder (ord)
+function processOrder (order)
 {
-	console.log(ord.orderId , ord.orderName , ord.status )
+	// infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier;
+	getTRNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKei, order.sessionKey,
+		
+		function (err,bodyGetShTrNos){
+			if ( !err  )
+			{
+				var infoReturned =
+				{
+					shopifyInfo : {
+									id: order.orderId,
+									name: order.orderName,
+									shipping_lines: [ { carrier_identifier : order.carrierId } ]
+								  }
+					bodyGetShipmentTrackingNos : bodyGetShTrNos
+				}
+				rollbar.init(nconf.get("keys:rollbarKey"));
+				updateOrder(infoReturned, rollbar, updateCallback )		
+			}
+
+		})
+}
+
+function updateCallback(err, oname)
+{
+	if (err)
+	{
+		console.log(err);
 	
+	}else{
+		Order.findOneAndUpdate( { orderName: oname }, { status: "4" } , function(err, user) {
+		  if (err) throw err;
+
+		  // we have the updated user returned to us
+		  console.log(user);
+		});
+	}
+}
+
+
+function getTRNumbers(orderName, orderId, orderNumberGreenestep, apiKey, sessionKey, cb)
+{
+
+	var docType = 8;
+	var trackingOrdersNosInfo = `{	key:[ {"API_KEY":"`+apiKey+`","SESSION_KEY": "`+sessionKey+`"}],
+									data:"{
+											'orderNo':'`+orderNumberGreenestep+`',
+											'docType':'`+docType+`'
+										  }"
+								 }`;
+
+		performRequest.performRequest( orderName , 'POST','/StoreAPI/WebOrder/GetShipmentTrackingNos',trackingOrdersNosInfo,
+			function (body) {
+				var bodyJSON = JSON.parse(body);
+			  	if (conditionToTerminate(bodyJSON)){
+					rollbar.reportMessageWithPayloadData( "[#"+orderName+"]A new tracking number ('"+bodyJSON["DATA"][0].TrackingNumber+"') was entered for order number: "+orderNumberGreenestep,
+					{
+						level: "info",
+						fingerprint: "$NewTrkNumb" + orderName + "@" + orderId.toString(),
+						shopifyOrderID: orderName,
+						OrderNo: orderNumberGreenestep,
+						docType: docType
+					});
+			  		cb(null,bodyJSON);
+				}
+			},
+			function (body) {
+				console.log("[#"+orderName+"][getShipmentTrackingNos]getShipmentTrackingNos Error.");
+				rollbar.reportMessageWithPayloadData( "[#"+orderName+"]There was an error when obtaining the Tracking number for the order number: " + orderName,
+					{
+						level: "error",
+						fingerprint: "$ErrTrkNum" + orderName + "@" + orderId.toString(),
+						shopifyOrderID: orderName,
+						response: body,
+						OrderNo: orderNumberGreenestep,
+						docType: docType,
+						allRequest: trackingOrdersNosInfo
+						
+					});
+		  		cb(1,body);
+			}
+		);
+}
+
+function conditionToTerminate(bodyJSON){
+	return  (bodyJSON["DATA"][0] != undefined) &&
+			(bodyJSON["DATA"][0].TrackingNumber != null) &&
+			(bodyJSON["DATA"][0].TrackingNumber != undefined) &&
+			(bodyJSON["DATA"][0].DelivDesc != null) &&
+			(bodyJSON["DATA"][0].DelivDesc != undefined);
 }

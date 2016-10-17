@@ -6,7 +6,7 @@ var order = require('../includes/order');
 var functions = require('../includes/functions');
 var rollbar = require("rollbar");
 var request = require('request');
-
+var Order = require('../Order');
 // this will be used for storing temporarily processed transaction id's
 var processed = [];
 
@@ -67,6 +67,7 @@ exports.orderPlaced = function (req, res) {
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;
 
+
 	// reporting to rollbar all the shopify request
 	console.log("[#"+infoReturned['shopifyInfo'].name+"]Executing orderPlaced with order: '" + infoReturned['shopifyInfo'].name + "'");
 	rollbar.reportMessageWithPayloadData(
@@ -81,6 +82,23 @@ exports.orderPlaced = function (req, res) {
 	// check if all data is correct
 	var ErrMsg = canContinue(infoReturned.shopifyInfo);	
 	if ( !ErrMsg ){
+
+		var newOrder = Order({
+		  orderId: processed[infoReturned['shopifyInfo'].id,
+		  orderName: processed[infoReturned['shopifyInfo'].name,
+		  carrierId : infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier,
+		  status: "1"
+		});
+
+
+		// Save the order
+		var cont = false
+		newOrder.save(function(err) {
+		  	if (err) console.log(err)
+		  	cont = !err
+		});
+		while (!cont) {}
+
 
 		var loginSync = function(done){
 			loginRequest.loginGS(infoReturned["shopifyInfo"] , rollbar, 
@@ -173,17 +191,9 @@ exports.orderPlaced = function (req, res) {
 							ShoppingCartLoginSync,
 							getCustomerDetailsSync,
 							addItemToCartSync,
-							createOrderSync,
-							getShipmentTrackingNosSync,
-							updateOrderSync
+							createOrderSync
 						],
-			function(err)
-			{
-				if (err)
-					console.log("[#"+infoReturned['shopifyInfo'].name+"]Process finished with errors.");
-				else
-					console.log("[#"+infoReturned['shopifyInfo'].name+"]Process finished successfully.");
-			}
+			function(err) { if (err) console.log(err) }
 		)
 
 		

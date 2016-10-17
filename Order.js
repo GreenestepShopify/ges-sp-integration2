@@ -7,10 +7,14 @@ var Schema = mongoose.Schema;
 var Order = new Schema({
   orderId: String,
   orderName: String,
+  apiKei: String,
+  sessionKey: String,
+  orderNumberGreenestep: String,
+  carrierId : String,
   status: String
 });
 
-// 1= Order placed, 2=OrderCreated in GESOrder
+// 1= Order placed, 2=OrderCreated in GESOrder, 4 : eliminada
 
 // the schema is useless so far
 // we need to create a model using it
