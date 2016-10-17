@@ -75,7 +75,8 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 
 	performRequest.performRequest( infoReturned['shopifyInfo'].name , 'POST','/StoreAPI/WebOrder/CreateOrder',orderData,
 		function (body) {
-			if ( JSON.parse(body)["DATA"] == undefined ){
+			var parsedData = JSON.parse(body)["DATA"]
+			if ( parsedData == undefined ){
 				console.log("[#"+infoReturned['shopifyInfo'].name+"][createOrder]CreateOrder error: Greenestep server is sending an empty response. May be some product(s) in the cart are not being displayed on the web store.");
 				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"]There was an error creating a new order, Greenestep server is sending an empty response. May be some product(s) in the cart are not being displayed on the web store at greenestep backoffice.",
 				{ 	
@@ -94,10 +95,10 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 				});
 				cb(1,body);
 			}else{ 
-				console.log("data: " , JSON.parse(body)["DATA"])
+				//console.log("data: " , JSON.parse(body)["DATA"])
 				Order.findOneAndUpdate(
 					{ orderName: infoReturned['shopifyInfo'].name },
-					{ orderNumberGreenestep: JSON.parse(body)["DATA"].OrderNo , status: '2' } ,
+					{ orderNumberGreenestep: parsedData.OrderNo , status: '2' } ,
 					function(err, user) {
 						  if (err)
 						  {

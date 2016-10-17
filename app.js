@@ -47,6 +47,7 @@ app.listen(app.get('port'), function() {
 
 function executeOnInterval()
 {
+	console.log("interval")
 	Order.find( {status: '2'}, function(err, orders) {
 	  if (err) throw err;
 	  var k = 0;
