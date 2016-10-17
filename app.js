@@ -74,8 +74,10 @@ function processOrder (order)
 								  },
 					bodyGetShipmentTrackingNos : bodyGetShTrNos
 				}
+				console.log("infoReturned: " , infoReturned)
+				
 				rollbar.init(nconf.get("keys:rollbarKey"));
-				updateOrder(infoReturned, rollbar, updateCallback )		
+				updateOrder.updateOrder(infoReturned, rollbar, updateCallback )		
 			}
 
 		})
