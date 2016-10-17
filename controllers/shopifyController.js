@@ -63,6 +63,9 @@ exports.orderPlaced = function (req, res) {
 		lineitems: []
 	}
 
+	console.log(req.body)
+	//infoReturned["shopifyInfo"] = sampleOrder();
+
 	// Code for preventing multiple execution
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;
