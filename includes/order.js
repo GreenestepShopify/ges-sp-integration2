@@ -2,6 +2,7 @@ var nconf    = require('nconf');
 var async = require('async');
 var CronJob = require('cron').CronJob;
 var performRequest = require('./performRequest');
+var Order = require('../Order');
 
 function returnCartItemInfo (sessKey, apiKey, itemcode, quantity, itemAliasCode, measureCode)
 {
