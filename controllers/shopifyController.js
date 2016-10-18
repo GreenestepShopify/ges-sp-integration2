@@ -4,7 +4,7 @@ var customer = require('../includes/customer');
 var loginRequest = require('../includes/loginRequest');
 var order = require('../includes/order');
 var functions = require('../includes/functions');
-var STATUS = require('../includes/STATUS');
+var constants = require('../includes/constants.js');
 var rollbar = require("rollbar");
 var request = require('request');
 var Order = require('../Order');
@@ -93,7 +93,7 @@ exports.orderPlaced = function (req, res) {
 		  orderId: infoReturned['shopifyInfo'].id,
 		  orderName: infoReturned['shopifyInfo'].name,
 		  carrierId : infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier,
-		  status: STATUS.ORDER_PLACED
+		  status: ORDER_PLACED
 		});
 
 

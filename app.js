@@ -10,7 +10,7 @@ var rollbar = require("rollbar");
 var updateOrder = require('./includes/updateOrder');
 var performRequest = require('./includes/performRequest');
 var async = require('async');
-var STATUS = require('./includes/STATUS');
+var constants = require('./includes/constants.js');
 
 if ( process.env.NODE_ENV === undefined ) {
 	process.env.NODE_ENV = 'default';

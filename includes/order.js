@@ -3,7 +3,7 @@ var async = require('async');
 var CronJob = require('cron').CronJob;
 var performRequest = require('./performRequest');
 var Order = require('../Order');
-var STATUS = require('./STATUS');
+var constants = require('./constants.js');
 
 function returnCartItemInfo (sessKey, apiKey, itemcode, quantity, itemAliasCode, measureCode)
 {
@@ -98,7 +98,7 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 			}else{ 
 				Order.findOneAndUpdate(
 					{ orderName: infoReturned['shopifyInfo'].name },
-					{ orderNumberGreenestep: parsedData.OrderNo , status: STATUS.ORDER_CREATED } ,
+					{ orderNumberGreenestep: parsedData.OrderNo , status: ORDER_CREATED } ,
 					function(err, user) {
 						  if (err)
 						  {
