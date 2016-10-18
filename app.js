@@ -89,6 +89,7 @@ function processOrder (order, asyncCallback)
 
 function updateCallback(err, oname, asyncCallback)
 {
+	console.log("updateCallback" , err)
 	if (err){
 		console.log(err);
 		asyncCallback(null)

@@ -4,7 +4,7 @@ var rollbar = require("rollbar");
 exports.updateOrder = function  (infoReturned, rollbar, callback, asyncCallback)
 {
 	console.log("on update Order: " , infoReturned.shopifyInfo.name)
-	callback ("[#"+infoReturned.shopifyInfo.name+"]" , infoReturned['shopifyInfo'].name, asyncCallback);
+	callback (null , infoReturned['shopifyInfo'].name, asyncCallback);
 	/*
 	var shopname = nconf.get("additionalKeys:shopName");
 	var shopkey = nconf.get("keys:shopifyKey");
