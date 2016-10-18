@@ -7,7 +7,7 @@ var Schema = mongoose.Schema;
 var Order = new Schema({
   orderId: String,
   orderName: String,
-  apiKei: String,
+  apiKey: String,
   sessionKey: String,
   orderNumberGreenestep: String,
   carrierId : String,

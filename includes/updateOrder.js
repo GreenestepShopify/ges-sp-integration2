@@ -1,8 +1,10 @@
 var nconf    = require('nconf');
 var rollbar = require("rollbar");
 
-exports.updateOrder = function  (infoReturned, rollbar, callback)
+exports.updateOrder = function  (infoReturned, rollbar, callback, asyncCallback)
 {
+	callback ("[#"+infoReturned.shopifyInfo.name+"]" , infoReturned['shopifyInfo'].name, asyncCallback);
+	/*
 	var shopname = nconf.get("additionalKeys:shopName");
 	var shopkey = nconf.get("keys:shopifyKey");
 	var shopPassword = nconf.get("keys:shopifyPassword");
@@ -86,18 +88,19 @@ exports.updateOrder = function  (infoReturned, rollbar, callback)
 						kind: transactionKind
 					}
 				);
-				callback (messageSent , infoReturned['shopifyInfo'].name );
+				callback (messageSent , infoReturned['shopifyInfo'].name , asyncCallback);
 			}else{
 				// Transaction successful
 				console.log( canonicMessage + "Transaction done succesfully, ammount captured." );
 				if (messageSent == canonicMessage)
-					callback(null , infoReturned['shopifyInfo'].name);
+					callback(null , infoReturned['shopifyInfo'].name , asyncCallback);
 				else
-					callback (messageSent , infoReturned['shopifyInfo'].name);
+					callback (messageSent , infoReturned['shopifyInfo'].name, asyncCallback);
 			}
 		});
 
 	});
+	*/
 }
 
 function translateCarrier(DelivDesc)

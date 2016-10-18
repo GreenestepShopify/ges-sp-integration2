@@ -9,7 +9,7 @@ var CronJob = require('cron').CronJob;
 var rollbar = require("rollbar");
 var updateOrder = require('./includes/updateOrder');
 var performRequest = require('./includes/performRequest');
-
+var STATUS = require('./includes/STATUS');
 
 if ( process.env.NODE_ENV === undefined ) {
 	process.env.NODE_ENV = 'default';
@@ -36,30 +36,32 @@ router.route(app)
 //Start sever
 app.listen(app.get('port'), function() {
     console.log('Server listening on process ' + process.pid + " and port " + app.get('port'));
-	//mongoose.connect('mongodb://gsuser:greenestep1@ds059306.mlab.com:59306/heroku_9r39zlz9');
 	console.log("Using URI: " ,  nconf.get("additionalKeys:mongodb_uri"))
 	mongoose.connect(nconf.get("additionalKeys:mongodb_uri"))
-	//mongoose.connect('mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj');
-	//mongodb://gsuser:greenestep1@ds059654.mlab.com:59654/heroku_kzt4j2kj
 	var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
 })
 
 function executeOnInterval()
 {
-	Order.find( {status: '2'}, function(err, orders) {
+	Order.find( {status: STATUS.ORDER_CREATED }, function(err, orders) {
 	  if (err) console.log("err on interval: " , err);
-	  var k = 0;
-	  for (k=0 ; k<orders.length;k++)
-		processOrder (orders[k])
+	  
+		async.each(orders, function(currentOrder, callback) {
+			processOrder (currentOrder, function(error){ callback(error) } )
+		}, function(err) {
+			if (err) {
+	  			console.log("error on async process")
+			}
+		});
 	});
 }
 
-function processOrder (order)
+function processOrder (order, asyncCallback)
 {
-	getTRNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKei, order.sessionKey,
+	getTrackingNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKey, order.sessionKey,
 		
-		function (err,bodyGetShTrNos){
-			if ( !err  )
+		function (err,bodyGetShippingTrackingNumbers){
+			if (!err)
 			{
 				var infoReturned =
 				{
@@ -68,30 +70,39 @@ function processOrder (order)
 									name: order.orderName,
 									shipping_lines: [ { carrier_identifier : order.carrierId } ]
 								  },
-					bodyGetShipmentTrackingNos : bodyGetShTrNos
+					bodyGetShipmentTrackingNos : bodyGetShippingTrackingNumbers
 				}
-
 				rollbar.init(nconf.get("keys:rollbarKey"));
-				updateOrder.updateOrder(infoReturned, rollbar, updateCallback )		
+				updateOrder.updateOrder(infoReturned, rollbar, updateCallback, asyncCallback )		
+			}else{
+				console.log("Error when trying to get Tracking number on GES: order: ", order.orderId)
+				asyncCallback(err)
 			}
 
-		})
+		} , asyncCallback)
 }
 
-function updateCallback(err, oname)
+function updateCallback(err, oname, asyncCallback)
 {
 	if (err){
 		console.log(err);
+		asyncCallback(null)
 	}else{
-		Order.findOneAndUpdate( { orderName: oname }, { status: "4" } , function(err, order) {
-		  if (err) console.log( "On updateCallbackError: " , err );
-		  console.log("Process finished successfully");
+		Order.findOneAndUpdate( { orderName: oname }, { status: STATUS.FINISHED } , function(err, order) {
+		  if (err) {
+		  	console.log( "On updateCallbackError: " , err );
+		  	asyncCallback(null)
+		  }else{
+		  	console.log("Process finished successfully");
+		  	asyncCallback(null)
+		  }
+		  
 		});
 	}
 }
 
 
-function getTRNumbers(orderName, orderId, orderNumberGreenestep, apiKey, sessionKey, cb)
+function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, sessionKey, cb, asyncCallback)
 {
 
 	var docType = 8;
@@ -114,7 +125,7 @@ function getTRNumbers(orderName, orderId, orderNumberGreenestep, apiKey, session
 						OrderNo: orderNumberGreenestep,
 						docType: docType
 					});
-			  		cb(null,bodyJSON);
+			  		cb(null,bodyJSON,asyncCallback);
 				}
 			},
 			function (body) {
@@ -130,7 +141,7 @@ function getTRNumbers(orderName, orderId, orderNumberGreenestep, apiKey, session
 						allRequest: trackingOrdersNosInfo
 						
 					});
-		  		cb(1,body);
+		  		cb(1,body, asyncCallback);
 			}
 		);
 }
