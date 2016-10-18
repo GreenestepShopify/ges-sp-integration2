@@ -45,7 +45,7 @@ app.listen(app.get('port'), function() {
 function executeOnInterval()
 {
 	Order.find( {status: constants.ORDER_CREATED }, function(err, orders) {
-	  if (err) console.log("err when trying to find ORDER_CREATED orders: " , err);
+	  if (err) console.log("error when trying to find ORDER_CREATED orders: " , err);
 	  
 		async.each(orders, function(currentOrder, callback) {
 			processOrder (currentOrder, function(error){ callback(error) } )
@@ -76,7 +76,7 @@ function processOrder (order, asyncCallback)
 				rollbar.init(nconf.get("keys:rollbarKey"));
 				updateOrder.updateOrder(infoReturned, rollbar, updateCallback, asyncCallback )		
 			}else{
-				console.log("Error when trying to get Tracking number on GES: order: ", order.orderId)
+				console.log("[#"+order.orderId+"]Error when trying to get Tracking number on GES: order: ", order.orderId)
 				asyncCallback(err)
 			}
 
@@ -86,15 +86,15 @@ function processOrder (order, asyncCallback)
 function updateCallback(err, oname, asyncCallback)
 {
 	if (err){
-		console.log("on UpdateCallback error: " , err);
+		console.log("[#"+oname+"]on UpdateCallback error: " , err);
 		asyncCallback(null)
 	}else{
 		Order.findOneAndUpdate( { orderName: oname }, { status: constants.FINISHED } , function(err, order) {
 		  if (err) {
-		  	console.log( "On updating order to FINISHED error: " , err );
+		  	console.log( "[#"+oname+"]On updating order to FINISHED error: " , err );
 		  	asyncCallback(null)
 		  }else{
-		  	console.log("Process finished successfully");
+		  	console.log("[#"+oname+"]Process finished successfully");
 		  	asyncCallback(null)
 		  }
 		  
