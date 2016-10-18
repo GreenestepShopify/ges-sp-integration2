@@ -19,7 +19,7 @@ function tryLogin ( shopifyInfo, data , tryn, rollbar, callback )
 			{
 				if ( tryn > 1 ) // at least 1 failed attempt
 					rollbar.reportMessageWithPayloadData( "[" + shopifyInfo.name + "][loginGS]Login to GES successful after "+tryn+" attempts.", { 	level: "info", fingerprint: "$InfGesLog_" + shopifyInfo.name + "@" + shopifyInfo.id.toString(), response: body, dataSent: data });
-				console.log( firstMessage + "Login Successful." );
+				console.log( firstMessage +  "Login Successful." );
 				Order.findOneAndUpdate(
 					{ orderName: shopifyInfo.name },
 					{ apiKey: bodyJson['KEY'][0]['API_KEY'], sessionKey: bodyJson['KEY'][0]['SESSION_KEY'] } ,
