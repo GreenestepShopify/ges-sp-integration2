@@ -62,6 +62,7 @@ function executeOnInterval()
 function processOrder (order, asyncCallback)
 {
 	console.log("process")
+	console.log(order.orderName, order.orderId)
 	getTrackingNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKey, order.sessionKey,
 		
 		function (err,bodyGetShippingTrackingNumbers){
@@ -116,10 +117,10 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 											'docType':'`+docType+`'
 										  }"
 								 }`;
-
+		console.log("INFOOOO: " , trackingOrdersNosInfo)			
 		performRequest.performRequest( orderName , 'POST','/StoreAPI/WebOrder/GetShipmentTrackingNos',trackingOrdersNosInfo,
 			function (body) {
-				console.log("akaka 1")
+				console.log("akaka 1: " , body)
 				var bodyJSON = JSON.parse(body);
 			  	if (conditionToTerminate(bodyJSON)){
 					rollbar.reportMessageWithPayloadData( "[#"+orderName+"]A new tracking number ('"+bodyJSON["DATA"][0].TrackingNumber+"') was entered for order number: "+orderNumberGreenestep,
