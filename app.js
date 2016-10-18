@@ -44,6 +44,7 @@ app.listen(app.get('port'), function() {
 
 function executeOnInterval()
 {
+	console.log("interval: " , STATUS.ORDER_CREATED )
 	Order.find( {status: STATUS.ORDER_CREATED }, function(err, orders) {
 	  if (err) console.log("err on interval: " , err);
 	  
@@ -59,6 +60,7 @@ function executeOnInterval()
 
 function processOrder (order, asyncCallback)
 {
+	console.log("process")
 	getTrackingNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKey, order.sessionKey,
 		
 		function (err,bodyGetShippingTrackingNumbers){
@@ -105,7 +107,7 @@ function updateCallback(err, oname, asyncCallback)
 
 function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, sessionKey, cb, asyncCallback)
 {
-
+	console.log("getTRNOS")
 	var docType = 8;
 	var trackingOrdersNosInfo = `{	key:[ {"API_KEY":"`+apiKey+`","SESSION_KEY": "`+sessionKey+`"}],
 									data:"{
