@@ -9,6 +9,7 @@ var CronJob = require('cron').CronJob;
 var rollbar = require("rollbar");
 var updateOrder = require('./includes/updateOrder');
 var performRequest = require('./includes/performRequest');
+var async = require('async');
 var STATUS = require('./includes/STATUS');
 
 if ( process.env.NODE_ENV === undefined ) {
