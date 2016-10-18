@@ -80,6 +80,7 @@ exports.orderPlaced = function (req, res) {
 		"[#" + infoReturned['shopifyInfo'].name + "]Executing process with a new order",
 		{
 			level: "info",
+			shopifyInfo: infoReturned['shopifyInfo'],
 			fingerprint: "$NewOrd_" + infoReturned['shopifyInfo'].name + "@ " + infoReturned['shopifyInfo'].id.toString(),
 			shopifyRequest: infoReturned["shopifyInfo"]
 		}
