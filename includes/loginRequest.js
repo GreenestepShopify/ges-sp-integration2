@@ -22,7 +22,7 @@ function tryLogin ( shopifyInfo, data , tryn, rollbar, callback )
 				console.log( firstMessage + "Login Successful." );
 				Order.findOneAndUpdate(
 					{ orderName: shopifyInfo.name },
-					{ apiKei: bodyJson['KEY'][0]['API_KEY'], sessionKey: bodyJson['KEY'][0]['SESSION_KEY'] } ,
+					{ apiKey: bodyJson['KEY'][0]['API_KEY'], sessionKey: bodyJson['KEY'][0]['SESSION_KEY'] } ,
 					function(err, user) {
 						  if (err)
 						  {
