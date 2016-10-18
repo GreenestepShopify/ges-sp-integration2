@@ -36,10 +36,10 @@ router.route(app)
 
 //Start sever
 app.listen(app.get('port'), function() {
-    console.log('FAKE Server listening on process ' + process.pid + " and port " + app.get('port'));
-	//console.log("Using URI: " ,  nconf.get("additionalKeys:mongodb_uri"))
-	//mongoose.connect(nconf.get("additionalKeys:mongodb_uri"))
-	//var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
+    console.log('Server listening on process ' + process.pid + " and port " + app.get('port'));
+	console.log("Using URI: " ,  nconf.get("additionalKeys:mongodb_uri"))
+	mongoose.connect(nconf.get("additionalKeys:mongodb_uri"))
+	var job = new CronJob( nconf.get("additionalKeys:interval") , executeOnInterval, null, true, 'America/Los_Angeles');
 })
 
 function executeOnInterval()
