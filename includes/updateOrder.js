@@ -3,9 +3,6 @@ var rollbar = require("rollbar");
 
 exports.updateOrder = function  (infoReturned, rollbar, callback, asyncCallback)
 {
-	console.log("on update Order: " , infoReturned.shopifyInfo.name)
-	callback (null , infoReturned['shopifyInfo'].name, asyncCallback);
-	/*
 	var shopname = nconf.get("additionalKeys:shopName");
 	var shopkey = nconf.get("keys:shopifyKey");
 	var shopPassword = nconf.get("keys:shopifyPassword");
@@ -101,7 +98,7 @@ exports.updateOrder = function  (infoReturned, rollbar, callback, asyncCallback)
 		});
 
 	});
-	*/
+	
 }
 
 function translateCarrier(DelivDesc)

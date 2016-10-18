@@ -44,10 +44,8 @@ app.listen(app.get('port'), function() {
 
 function executeOnInterval()
 {
-	console.log("interval1: " , constants.constants)
-	console.log("interval: " , constants.ORDER_CREATED )
 	Order.find( {status: constants.ORDER_CREATED }, function(err, orders) {
-	  if (err) console.log("err on interval: " , err);
+	  if (err) console.log("err when trying to find ORDER_CREATED orders: " , err);
 	  
 		async.each(orders, function(currentOrder, callback) {
 			processOrder (currentOrder, function(error){ callback(error) } )
@@ -61,8 +59,6 @@ function executeOnInterval()
 
 function processOrder (order, asyncCallback)
 {
-	console.log("process")
-	console.log(order.orderName, order.orderId)
 	getTrackingNumbers(order.orderName, order.orderId, order.orderNumberGreenestep, order.apiKey, order.sessionKey,
 		
 		function (err,bodyGetShippingTrackingNumbers){
@@ -89,14 +85,13 @@ function processOrder (order, asyncCallback)
 
 function updateCallback(err, oname, asyncCallback)
 {
-	console.log("updateCallback" , err)
 	if (err){
-		console.log(err);
+		console.log("on UpdateCallback error: " , err);
 		asyncCallback(null)
 	}else{
 		Order.findOneAndUpdate( { orderName: oname }, { status: constants.FINISHED } , function(err, order) {
 		  if (err) {
-		  	console.log( "On updateCallbackError: " , err );
+		  	console.log( "On updating order to FINISHED error: " , err );
 		  	asyncCallback(null)
 		  }else{
 		  	console.log("Process finished successfully");
@@ -110,7 +105,6 @@ function updateCallback(err, oname, asyncCallback)
 
 function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, sessionKey, cb, asyncCallback)
 {
-	console.log("getTRNOS")
 	var docType = 8;
 	var trackingOrdersNosInfo = `{	key:[ {"API_KEY":"`+apiKey+`","SESSION_KEY": "`+sessionKey+`"}],
 									data:"{
@@ -118,13 +112,11 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 											'docType':'`+docType+`'
 										  }"
 								 }`;
-		//console.log("INFOOOO: " , trackingOrdersNosInfo)			
+
 		performRequest.performRequest( orderName , 'POST','/StoreAPI/WebOrder/GetShipmentTrackingNos',trackingOrdersNosInfo,
 			function (body) {
-				console.log("akaka 1: ")
 				var bodyJSON = JSON.parse(body);
 			  	if (conditionToTerminate(bodyJSON)){
-					console.log("cond term true")
 					rollbar.reportMessageWithPayloadData( "[#"+orderName+"]A new tracking number ('"+bodyJSON["DATA"][0].TrackingNumber+"') was entered for order number: "+orderNumberGreenestep,
 					{
 						level: "info",
@@ -133,9 +125,8 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 						OrderNo: orderNumberGreenestep,
 						docType: docType
 					});
-					console.log("Exec callback on cond term")
 			  		cb(null,bodyJSON,asyncCallback);
-				}else { console.log("condTerm false: " , bodyJSON ) }
+				}
 			},
 			function (body) {
 				console.log("[#"+orderName+"][getShipmentTrackingNos]getShipmentTrackingNos Error.");
