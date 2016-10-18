@@ -117,7 +117,7 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 											'docType':'`+docType+`'
 										  }"
 								 }`;
-		console.log("INFOOOO: " , trackingOrdersNosInfo)			
+		//console.log("INFOOOO: " , trackingOrdersNosInfo)			
 		performRequest.performRequest( orderName , 'POST','/StoreAPI/WebOrder/GetShipmentTrackingNos',trackingOrdersNosInfo,
 			function (body) {
 				console.log("akaka 1: ")
@@ -134,7 +134,7 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 					});
 					console.log("Exec callback on cond term")
 			  		cb(null,bodyJSON,asyncCallback);
-				}
+				}else { console.log("condTerm false: " , bodyJSON ) }
 			},
 			function (body) {
 				console.log("[#"+orderName+"][getShipmentTrackingNos]getShipmentTrackingNos Error.");
