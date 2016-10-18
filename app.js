@@ -120,9 +120,10 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 		console.log("INFOOOO: " , trackingOrdersNosInfo)			
 		performRequest.performRequest( orderName , 'POST','/StoreAPI/WebOrder/GetShipmentTrackingNos',trackingOrdersNosInfo,
 			function (body) {
-				console.log("akaka 1: " , body)
+				console.log("akaka 1: ")
 				var bodyJSON = JSON.parse(body);
 			  	if (conditionToTerminate(bodyJSON)){
+					console.log("cond term true")
 					rollbar.reportMessageWithPayloadData( "[#"+orderName+"]A new tracking number ('"+bodyJSON["DATA"][0].TrackingNumber+"') was entered for order number: "+orderNumberGreenestep,
 					{
 						level: "info",
@@ -131,6 +132,7 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 						OrderNo: orderNumberGreenestep,
 						docType: docType
 					});
+					console.log("Exec callback on cond term")
 			  		cb(null,bodyJSON,asyncCallback);
 				}
 			},
