@@ -93,7 +93,7 @@ exports.orderPlaced = function (req, res) {
 		  orderId: infoReturned['shopifyInfo'].id,
 		  orderName: infoReturned['shopifyInfo'].name,
 		  carrierId : infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier,
-		  status: ORDER_PLACED
+		  status: constants.ORDER_PLACED
 		});
 
 

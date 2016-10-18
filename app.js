@@ -44,9 +44,9 @@ app.listen(app.get('port'), function() {
 
 function executeOnInterval()
 {
-	console.log("interval1: " , constants)
-	console.log("interval: " , ORDER_CREATED )
-	Order.find( {status: ORDER_CREATED }, function(err, orders) {
+	console.log("interval1: " , constants.constants)
+	console.log("interval: " , constants.ORDER_CREATED )
+	Order.find( {status: constants.ORDER_CREATED }, function(err, orders) {
 	  if (err) console.log("err on interval: " , err);
 	  
 		async.each(orders, function(currentOrder, callback) {

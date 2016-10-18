@@ -98,7 +98,7 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 			}else{ 
 				Order.findOneAndUpdate(
 					{ orderName: infoReturned['shopifyInfo'].name },
-					{ orderNumberGreenestep: parsedData.OrderNo , status: ORDER_CREATED } ,
+					{ orderNumberGreenestep: parsedData.OrderNo , status: constants.ORDER_CREATED } ,
 					function(err, user) {
 						  if (err)
 						  {
