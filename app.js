@@ -92,7 +92,7 @@ function updateCallback(err, oname, asyncCallback)
 		console.log(err);
 		asyncCallback(null)
 	}else{
-		Order.findOneAndUpdate( { orderName: oname }, { status: STATUS.FINISHED } , function(err, order) {
+		Order.findOneAndUpdate( { orderName: oname }, { status: constants.FINISHED } , function(err, order) {
 		  if (err) {
 		  	console.log( "On updateCallbackError: " , err );
 		  	asyncCallback(null)
@@ -119,6 +119,7 @@ function getTrackingNumbers(orderName, orderId, orderNumberGreenestep, apiKey, s
 
 		performRequest.performRequest( orderName , 'POST','/StoreAPI/WebOrder/GetShipmentTrackingNos',trackingOrdersNosInfo,
 			function (body) {
+				console.log("akaka 1")
 				var bodyJSON = JSON.parse(body);
 			  	if (conditionToTerminate(bodyJSON)){
 					rollbar.reportMessageWithPayloadData( "[#"+orderName+"]A new tracking number ('"+bodyJSON["DATA"][0].TrackingNumber+"') was entered for order number: "+orderNumberGreenestep,
