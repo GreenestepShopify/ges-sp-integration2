@@ -11,7 +11,8 @@
 		"gsBackoffice" : "http://24.89.145.74:92",
     "genericSKU" : "NEWSKU",
     "timeBetweenAutoRequest" : "0",
-    "allowedVendor" : "Franklin Mint Coins"
+    "allowedVendor" : "Franklin Mint Coins",
+    "mongodb_uri" : ""
   },
   "GesLogin":{
   	"GesLoginUsername":"ADMIN",

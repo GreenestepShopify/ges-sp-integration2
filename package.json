@@ -13,6 +13,7 @@
     "body-parser": "^1.14.2",
     "connect-flash": "^0.1.1",
     "cron": "*",
+    "mongoose": "*",
     "crypto": "0.0.3",
     "dateformat": "latest",
     "express": "^4.13.3",

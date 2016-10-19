@@ -4,9 +4,10 @@ var customer = require('../includes/customer');
 var loginRequest = require('../includes/loginRequest');
 var order = require('../includes/order');
 var functions = require('../includes/functions');
+var constants = require('../includes/constants.js');
 var rollbar = require("rollbar");
 var request = require('request');
-
+var Order = require('../Order');
 // this will be used for storing temporarily processed transaction id's
 var processed = [];
 
@@ -75,27 +76,14 @@ exports.orderPlaced = function (req, res) {
 		lineitems: []
 	}
 
+	//console.log(req.body)
+	//infoReturned["shopifyInfo"] = sampleOrder();
+ 
+
+ 	//console.log(infoReturned["shopifyInfo"])
 	// Code for preventing multiple execution
 	if (processed[infoReturned['shopifyInfo'].name] ) return;	
 	processed[infoReturned['shopifyInfo'].name] = true;
-
-
-	if ( !isThereItemWithVendorFMC( infoReturned.shopifyInfo ) ){
-		// NONE OF THE ITEMS BELONGS TO FMC VENDOR
-		console.log("[#"+infoReturned['shopifyInfo'].name+"]There is no item from '" + nconf.get("additionalKeys:allowedVendor") + "'' vendor on this order." );
-		console.log("[#"+infoReturned['shopifyInfo'].name+"]Process finished successfully.");
-		rollbar.reportMessageWithPayloadData(
-			"[#" + infoReturned['shopifyInfo'].name + "]There is no item from '" + nconf.get("additionalKeys:allowedVendor") + "'' vendor on this order.",
-			{
-				level: "info",
-				fingerprint: "$AllExternVendor_" + infoReturned['shopifyInfo'].name + "@ " + infoReturned['shopifyInfo'].id.toString(),
-				shopifyOrderID: infoReturned['shopifyInfo'].name,
-				filteredVendors: infoReturned.shopifyInfo.line_items.map( function(elem){ return elem.vendor } ).unique()
-			}
-		);
-		return;
-	}
-
 
 	// reporting to rollbar all the shopify request
 	console.log("[#"+infoReturned['shopifyInfo'].name+"]Executing orderPlaced with order: '" + infoReturned['shopifyInfo'].name + "'");
@@ -103,6 +91,7 @@ exports.orderPlaced = function (req, res) {
 		"[#" + infoReturned['shopifyInfo'].name + "]Executing process with a new order",
 		{
 			level: "info",
+			shopifyInfo: infoReturned['shopifyInfo'],
 			fingerprint: "$NewOrd_" + infoReturned['shopifyInfo'].name + "@ " + infoReturned['shopifyInfo'].id.toString(),
 			shopifyOrderID: infoReturned['shopifyInfo'].name,
 			shopifyRequest: infoReturned["shopifyInfo"]
@@ -112,6 +101,21 @@ exports.orderPlaced = function (req, res) {
 	// check if all data is correct
 	var ErrMsg = canContinue(infoReturned.shopifyInfo);	
 	if ( !ErrMsg ){
+
+		var newOrder = Order({
+		  orderId: infoReturned['shopifyInfo'].id,
+		  orderName: infoReturned['shopifyInfo'].name,
+		  carrierId : infoReturned['shopifyInfo'].shipping_lines[0].carrier_identifier,
+		  status: constants.ORDER_PLACED
+		});
+
+
+		// Save the order
+		var cont = false
+		newOrder.save(function(err) {
+		  	if (err) console.log(err)
+		  	
+		});
 
 		var loginSync = function(done){
 			loginRequest.loginGS(infoReturned["shopifyInfo"] , rollbar, 
@@ -204,17 +208,9 @@ exports.orderPlaced = function (req, res) {
 							ShoppingCartLoginSync,
 							getCustomerDetailsSync,
 							addItemToCartSync,
-							createOrderSync,
-							getShipmentTrackingNosSync,
-							updateOrderSync
+							createOrderSync
 						],
-			function(err)
-			{
-				if (err)
-					console.log("[#"+infoReturned['shopifyInfo'].name+"]Process finished with errors.");
-				else
-					console.log("[#"+infoReturned['shopifyInfo'].name+"]Process finished successfully.");
-			}
+			function(err) { if (err) console.log(err) }
 		)
 
 		
@@ -354,4 +350,178 @@ function updateOrder(infoReturned, rollbar, callback) {
 	});
 	
 	
+}
+
+function sampleOrder()
+{
+	var ord = 
+{ id: 4477401676,
+   email: 'shopify+test001@logoworks.com',
+   closed_at: null,
+   created_at: '2016-10-17T14:48:37-04:00',
+   updated_at: '2016-10-17T14:48:38-04:00',
+   number: 914,
+   note: '',
+   token: 'e54eaa0fa06fb721e6f5af6c52607797',
+   gateway: 'shopify_payments',
+   test: false,
+   total_price: '95.49',
+   subtotal_price: '79.95',
+   total_weight: 454,
+   total_tax: '7.59',
+   taxes_included: false,
+   currency: 'USD',
+   financial_status: 'authorized',
+   confirmed: true,
+   total_discounts: '0.00',
+   total_line_items_price: '79.95',
+   cart_token: 'aebd75411070fc545bd82a93f4345e26',
+   buyer_accepts_marketing: true,
+   name: 'FM1914',
+   referring_site: 'https://franklin-mint-coins.myshopify.com/admin/orders/4424212172',
+   landing_site: '/collections/entertainment/star-trek',
+   cancelled_at: null,
+   cancel_reason: null,
+   total_price_usd: '95.49',
+   checkout_token: '663fbbecfd5bd9094dd2870f2d8b9f5d',
+   reference: null,
+   user_id: null,
+   location_id: null,
+   source_identifier: null,
+   source_url: null,
+   processed_at: '2016-10-17T14:48:37-04:00',
+   device_id: null,
+   browser_ip: '201.217.143.194',
+   landing_site_ref: null,
+   order_number: 1914,
+   discount_codes: [],
+   note_attributes: [],
+   payment_gateway_names: [ 'shopify_payments' ],
+   processing_method: 'direct',
+   checkout_id: 12409666764,
+   source_name: 'web',
+   fulfillment_status: null,
+   tax_lines:
+    [ { title: 'NY State Tax', price: '3.52', rate: 0.04 },
+      { title: 'Nassau County Tax', price: '4.07', rate: 0.04625 } ],
+   tags: '',
+   contact_email: 'shopify+test001@logoworks.com',
+   order_status_url: 'https://checkout.shopify.com/9234676/checkouts/663fbbecfd5bd9094dd2870f2d8b9f5d/thank_you_token?key=c61a0c35b0b138ee7449bcc751925f50',
+   line_items:
+    [ { id: 8907593868,
+        variant_id: 24230593414,
+        title: '"Star Trek" 7PC Bridge Collection - Colorized JFK Half Dollars',
+        quantity: 1,
+        price: '79.95',
+        grams: 454,
+        sku: 'FM1172',
+        variant_title: '',
+        vendor: 'Franklin Mint Coins',
+        fulfillment_service: 'manual',
+        product_id: 7565985606,
+        requires_shipping: true,
+        taxable: true,
+        gift_card: false,
+        name: '"Star Trek" 7PC Bridge Collection - Colorized JFK Half Dollars',
+        variant_inventory_management: null,
+        properties: [],
+        product_exists: true,
+        fulfillable_quantity: 1,
+        total_discount: '0.00',
+        fulfillment_status: null
+         } ],
+   shipping_lines:
+    [ { id: 3733236236,
+        title: 'Standard Shipping',
+        price: '7.95',
+        code: 'Standard Shipping',
+        source: 'shopify',
+        phone: null,
+        requested_fulfillment_service_id: null,
+        delivery_category: null,
+        carrier_identifier: null, } ],
+   billing_address:
+    { first_name: 'Toufan',
+      address1: '67 5th Ave',
+      phone: '+1.646.844.9998',
+      city: 'Lawrence',
+      zip: '11559',
+      province: 'New York',
+      country: 'United States',
+      last_name: 'Rahimpour',
+      address2: 'Apt4',
+      company: 'CompanySTh',
+      latitude: 40.6246237,
+      longitude: -73.72933549999999,
+      name: 'Toufan Rahimpour',
+      country_code: 'US',
+      province_code: 'NY' },
+   shipping_address:
+    { first_name: 'Toufan',
+      address1: '67 5th Ave',
+      phone: '+1.646.844.9998',
+      city: 'Lawrence',
+      zip: '11559',
+      province: 'New York',
+      country: 'United States',
+      last_name: 'Rahimpour',
+      address2: 'Apt4',
+      company: 'CompanySTh',
+      latitude: 40.6246237,
+      longitude: -73.72933549999999,
+      name: 'Toufan Rahimpour',
+      country_code: 'US',
+      province_code: 'NY' },
+   fulfillments: [],
+   client_details:
+    { browser_ip: '201.217.143.194',
+      accept_language: 'en-US,en;q=0.5',
+      user_agent: 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:48.0) Gecko/20100101 Firefox/48.0',
+      session_hash: '63f781586ba85bfbfce2e70e237a7da1',
+      browser_width: 1349,
+      browser_height: 659 },
+   refunds: [],
+   payment_details:
+    { credit_card_bin: '374372',
+      avs_result_code: 'Z',
+      cvv_result_code: 'M',
+      credit_card_number: '•••• •••• •••• 5939',
+      credit_card_company: 'American Express' },
+   customer:
+    { id: 4312410758,
+      email: 'shopify+test001@logoworks.com',
+      accepts_marketing: true,
+      created_at: '2016-08-16T14:56:33-04:00',
+      updated_at: '2016-10-17T14:48:37-04:00',
+      first_name: 'Toufan',
+      last_name: 'Rahimpour',
+      orders_count: 54,
+      state: 'enabled',
+      total_spent: '95.49',
+      last_order_id: 4477401676,
+      note: null,
+      verified_email: true,
+      multipass_identifier: null,
+      tax_exempt: false,
+      tags: '',
+      last_order_name: 'FM1914',
+      default_address:
+       { id: 5015512268,
+         first_name: 'Toufan',
+         last_name: 'Rahimpour',
+         company: 'CompanySTh',
+         address1: '67 5th Ave',
+         address2: 'Apt4',
+         city: 'Lawrence',
+         province: 'New York',
+         country: 'United States',
+         zip: '11559',
+         phone: '+1.646.844.9998',
+         name: 'Toufan Rahimpour',
+         province_code: 'NY',
+         country_code: 'US',
+         country_name: 'United States',
+         default: true } } }
+
+    return ord;
 }

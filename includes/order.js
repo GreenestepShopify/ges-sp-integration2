@@ -2,6 +2,8 @@ var nconf    = require('nconf');
 var async = require('async');
 var CronJob = require('cron').CronJob;
 var performRequest = require('./performRequest');
+var Order = require('../Order');
+var constants = require('./constants.js');
 
 function returnCartItemInfo (sessKey, apiKey, itemcode, quantity, itemAliasCode, measureCode)
 {
@@ -74,7 +76,8 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 
 	performRequest.performRequest( infoReturned['shopifyInfo'].name , 'POST','/StoreAPI/WebOrder/CreateOrder',orderData,
 		function (body) {
-			if ( JSON.parse(body)["DATA"] == undefined ){
+			var parsedData = JSON.parse(body)["DATA"]
+			if ( parsedData == undefined ){
 				console.log("[#"+infoReturned['shopifyInfo'].name+"][createOrder]CreateOrder error: Greenestep server is sending an empty response. May be some product(s) in the cart are not being displayed on the web store.");
 				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"]There was an error creating a new order, Greenestep server is sending an empty response. May be some product(s) in the cart are not being displayed on the web store at greenestep backoffice.",
 				{ 	
@@ -92,8 +95,21 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 					allRequest: orderData
 				});
 				cb(1,body);
-			}else{
-				cb(null,body);
+			}else{ 
+				Order.findOneAndUpdate(
+					{ orderName: infoReturned['shopifyInfo'].name },
+					{ orderNumberGreenestep: parsedData.OrderNo , status: constants.ORDER_CREATED } ,
+					function(err, user) {
+						  if (err)
+						  {
+						  	console.log(err)
+						  	throw err;
+						  	callback( "ERROR" , "" , "" )
+						  }else{
+							  cb(null,body);
+						  }
+					}
+				);
 			}
 		},
 		function (body) {

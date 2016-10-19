@@ -2,6 +2,7 @@ var nconf    = require('nconf');
 var performRequest = require('./performRequest');
 var functions = require('./functions');
 var MAX_TRY_NUMBER = 5;
+var Order = require('../Order');
 
 function tryLogin ( shopifyInfo, data , tryn, rollbar, callback )
 {
@@ -18,8 +19,22 @@ function tryLogin ( shopifyInfo, data , tryn, rollbar, callback )
 			{
 				if ( tryn > 1 ) // at least 1 failed attempt
 					rollbar.reportMessageWithPayloadData( "[" + shopifyInfo.name + "][loginGS]Login to GES successful after "+tryn+" attempts.", { 	level: "info", fingerprint: "$InfGesLog_" + shopifyInfo.name + "@" + shopifyInfo.id.toString(), response: body, dataSent: data });
-				console.log( firstMessage + "Login Successful." );
-				callback( null , bodyJson['KEY'][0]['API_KEY'] , bodyJson['KEY'][0]['SESSION_KEY'] );
+				console.log( firstMessage +  "Login Successful." );
+				Order.findOneAndUpdate(
+					{ orderName: shopifyInfo.name },
+					{ apiKey: bodyJson['KEY'][0]['API_KEY'], sessionKey: bodyJson['KEY'][0]['SESSION_KEY'] } ,
+					function(err, user) {
+						  if (err)
+						  {
+						  	console.log(err)
+						  	throw err;
+						  	callback( "ERROR" , "" , "" )
+						  }else{
+							  callback( null , bodyJson['KEY'][0]['API_KEY'] , bodyJson['KEY'][0]['SESSION_KEY'] );
+						  }
+
+					}
+				);
 			}
 			else
 				tryLogin( shopifyInfo, data , tryn + 1 , rollbar, callback )
