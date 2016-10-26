@@ -49,9 +49,9 @@ function executeOnInterval()
 	Order.find( {status: constants.ORDER_CREATED }, function(err, orders) {
 		
 		counter++;
-		console.log("********************************")
-			console.log(orders)
-		console.log("********************************")
+		//console.log("********************************")
+		//	console.log(orders)
+		//console.log("********************************")
 
 		if (err){
 			console.log("error when trying to find ORDER_CREATED orders: " , err);
