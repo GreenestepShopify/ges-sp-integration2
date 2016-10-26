@@ -47,17 +47,15 @@ app.listen(app.get('port'), function() {
 function executeOnInterval()
 {
 	Order.find( {status: constants.ORDER_CREATED }, function(err, orders) {
-		
-		counter++;
-		//console.log("********************************")
-		//	console.log(orders)
-		//console.log("********************************")
 
 		if (err){
 			console.log("error when trying to find ORDER_CREATED orders: " , err);
 			return;
 		} 
 
+		counter++;
+		var pending = orders.map( function(elem){ return elem.orderName } );
+		console.log("Waiting T.N. for: " , pending )
 		
 		async.each(orders, function(currentOrder, callback) {
 			processOrder (currentOrder, function(error){ callback(error) } )
