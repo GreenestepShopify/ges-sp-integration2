@@ -55,7 +55,7 @@ function executeOnInterval()
 
 		counter++;
 		var pending = orders.map( function(elem){ return elem.orderName } );
-		console.log("Waiting T.N. for: " , pending )
+		console.log("Waiting T.N. for: " , pending.toString() )
 		
 		async.each(orders, function(currentOrder, callback) {
 			processOrder (currentOrder, function(error){ callback(error) } )
