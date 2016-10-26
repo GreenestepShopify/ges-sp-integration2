@@ -11,7 +11,7 @@ var updateOrder = require('./includes/updateOrder');
 var performRequest = require('./includes/performRequest');
 var async = require('async');
 var constants = require('./includes/constants.js');
-var counter = 0
+var counter = -1
 
 
 if ( process.env.NODE_ENV === undefined ) {
@@ -54,9 +54,12 @@ function executeOnInterval()
 		} 
 
 		counter++;
-		var pending = orders.map( function(elem){ return elem.orderName } );
-		console.log("Waiting T.N. for: " , pending.toString() )
-		
+		if ( (counter % 30) == 0 )
+		{
+			var pending = orders.map( function(elem){ return elem.orderName+' ' } );
+			console.log("Waiting T.N. for: [" + pending.toString() + "]")			
+		}
+
 		async.each(orders, function(currentOrder, callback) {
 			processOrder (currentOrder, function(error){ callback(error) } )
 		}, function(err) {
