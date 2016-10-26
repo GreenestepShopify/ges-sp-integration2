@@ -11,6 +11,8 @@ var updateOrder = require('./includes/updateOrder');
 var performRequest = require('./includes/performRequest');
 var async = require('async');
 var constants = require('./includes/constants.js');
+var counter = 0
+
 
 if ( process.env.NODE_ENV === undefined ) {
 	process.env.NODE_ENV = 'default';
@@ -45,15 +47,26 @@ app.listen(app.get('port'), function() {
 function executeOnInterval()
 {
 	Order.find( {status: constants.ORDER_CREATED }, function(err, orders) {
-	  if (err) console.log("error when trying to find ORDER_CREATED orders: " , err);
-	  
+		
+		counter++;
+		console.log("********************************")
+			console.log(orders)
+		console.log("********************************")
+
+		if (err){
+			console.log("error when trying to find ORDER_CREATED orders: " , err);
+			return;
+		} 
+
+		
 		async.each(orders, function(currentOrder, callback) {
 			processOrder (currentOrder, function(error){ callback(error) } )
 		}, function(err) {
 			if (err) {
-	  			console.log("error on async process")
+				console.log("error on async process")
 			}
 		});
+
 	});
 }
 
@@ -76,7 +89,7 @@ function processOrder (order, asyncCallback)
 				rollbar.init(nconf.get("keys:rollbarKey"));
 				updateOrder.updateOrder(infoReturned, rollbar, updateCallback, asyncCallback )		
 			}else{
-				console.log("[#"+order.orderId+"]Error when trying to get Tracking number on GES: order: ", order.orderId)
+				console.log("[#"+order.orderName+"]Error when trying to get Tracking number on GES: order: ", order.orderId)
 				asyncCallback(err)
 			}
 
