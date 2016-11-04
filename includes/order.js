@@ -93,6 +93,22 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 				});
 				cb(1,body);
 			}else{
+				rollbar.reportMessageWithPayloadData( "[#"+infoReturned['shopifyInfo'].name+"] Order created successfully on Greenestep.",
+				{ 	
+					level: "info",
+
+					shopifyOrderID: infoReturned['shopifyInfo'].name,
+					fingerprint: "$successCreatedOrder" + infoReturned['shopifyInfo'].name + "@" + infoReturned['shopifyInfo'].id.toString(),
+					shopifyRequest: infoReturned["shopifyInfo"],
+					response: body,
+					ShipAddressCode: ShipAddressCode,
+					DeliveryMethod: DeliveryMethod,
+					FlatShippingCharge: FlatShippingCharge,
+					PaymentType: PaymentType,
+					PaymentTermCode: PaymentTermCode,
+					allRequest: orderData
+				});
+
 				cb(null,body);
 			}
 		},
