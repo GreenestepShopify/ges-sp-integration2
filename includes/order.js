@@ -33,7 +33,7 @@ exports.createOrder = function  (infoReturned, rollbar, cb){
 	
 	// this is the only relevant information, the rest must be hardcoded
 	var ShipAddressCode = dataElement.match(/'addressCode':'(.+?)'/)[1];
-	var DeliveryMethod = "USPS-REG";
+	var DeliveryMethod = "UPSGR";
 	var PaymentType = 2;
 	var PaymentTermCode = "ONCC";
 	var FlatShippingCharge = infoReturned['shopifyInfo'].shipping_lines[0].price;
